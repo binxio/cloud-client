@@ -2,10 +2,9 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', '$_IMAGE:latest', '.']
 - name: 'gcr.io/cloud-builders/docker'
-  env:
-    - TAG=$TAG_NAME
-    - IMAGE=$_IMAGE
-  entrypoint: /bin/bash
-  args: ['-c', 'docker tag $$IMAGE:latest $$IMAGE:${TAG:-latest}']
+  args: ['tag', '$_IMAGE:latest', '$_IMAGE:$SHORT_SHA']
 substitutions:
     _IMAGE: gcr.io/binx-io/instruqt-cloud-client
+images:
+  - ${_IMAGE}:latest
+  - ${_IMAGE}:${SHORT_SHA}
