@@ -1,5 +1,7 @@
+timeout: 45m
 steps:
 - name: 'gcr.io/cloud-builders/docker'
+  timeout: 30m
   args: ['build', '-t', '$_IMAGE:latest', '.']
 - name: 'gcr.io/cloud-builders/docker'
   args: ['tag', '$_IMAGE:latest', '$_IMAGE:$SHORT_SHA']

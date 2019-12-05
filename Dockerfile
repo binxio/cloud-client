@@ -1,5 +1,6 @@
 FROM python:3.7
 
+
 RUN apt-get update && \
     apt-get install -y curl lsb-release gnupg apt-utils wget unzip && \
     curl -sS --fail -L https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
@@ -28,10 +29,21 @@ RUN wget --quiet https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/t
   && mv terraform /usr/bin \
   && rm terraform_${TERRAFORM_VERSION}_linux_amd64.zip
 
+ARG NODE_VERSION=9.3.0
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.1/install.sh | bash && \
+    . $HOME/.nvm/nvm.sh && \
+    nvm install v$NODE_VERSION \
+    rm -rf $HOME/.nvm
+
+ENV PATH=/bin/versions/node/v$NODE_VERSION/bin:$PATH
+RUN npm install -g aws-cdk
+
+RUN curl --silent --location "https://github.com/weaveworks/eksctl/releases/download/latest_release/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /usr/bin
+
 COPY assets/  /var/www/html/assets/
 COPY index.html.tmpl /opt/instruqt/
 COPY docker-entrypoint.sh /opt/instruqt/
 
-ENV PATH=/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENV PATH=/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/bin/versions/node/v$NODE_VERSION/bin
 
 ENTRYPOINT [ "/opt/instruqt/docker-entrypoint.sh" ]
