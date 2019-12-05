@@ -4,7 +4,7 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   env:
     - TAG=$TAG_NAME
-    - IMAGE=$IMAGE
+    - IMAGE=$_IMAGE
   entrypoint: /bin/bash
   args: ['-c', 'docker tag $_IMAGE:latest $_IMAGE:${TAG:-latest}']
 substitutions:
