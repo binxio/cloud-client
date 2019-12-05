@@ -6,6 +6,6 @@ steps:
     - TAG=$TAG_NAME
     - IMAGE=$_IMAGE
   entrypoint: /bin/bash
-  args: ['-c', 'docker tag $_IMAGE:latest $_IMAGE:${TAG:-latest}']
+  args: ['-c', 'docker tag $IMAGE:latest $IMAGE:${TAG:-latest}']
 substitutions:
-    _IMAGE: gcr.io/$PROJECT_ID/instruqt/cloud-client
+    _IMAGE: gcr.io/${PROJECT_ID}/instruqt/cloud-client
