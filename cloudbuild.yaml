@@ -1,8 +1,11 @@
 steps:
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/${PROJECT_ID}/instruqt/cloud-client:latest', '.']
+  args: ['build', '-t', '$_IMAGE:latest', '.']
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['tag', 'gcr.io/${PROJECT_ID}/instruqt/cloud-client:latest', 'gcr.io/${PROJECT_ID}/instruqt/cloud-client:${TAG_NAME:-latest}']
-images:
-- gcr.io/${PROJECT_ID}/instruqt/cloud-client:latest
-- gcr.io/${PROJECT_ID}/instruqt/cloud-client:${TAG_NAME:-latest}
+  env:
+    - TAG=$TAG_NAME
+    - IMAGE=$IMAGE
+  entrypoint: /bin/bash
+  args: ['-c', 'docker tag $_IMAGE:latest $_IMAGE:${TAG:-latest}']
+substitutions:
+    _IMAGE: gcr.io/$PROJECT_ID/instruqt/cloud-client
