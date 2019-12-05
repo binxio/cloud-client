@@ -8,4 +8,4 @@ steps:
   entrypoint: /bin/bash
   args: ['-c', 'docker tag $$IMAGE:latest $$IMAGE:${TAG:-latest}']
 substitutions:
-    _IMAGE: gcr.io/${PROJECT_ID}/instruqt/cloud-client
+    _IMAGE: gcr.io/binx-io/instruqt/cloud-client
