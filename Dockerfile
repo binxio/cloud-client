@@ -1,7 +1,7 @@
 FROM python:3.7
 
 RUN apt-get update && \
-    apt-get install -y curl lsb-release gnupg apt-utils wget && \
+    apt-get install -y curl lsb-release gnupg apt-utils wget unzip && \
     curl -sS --fail -L https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
     echo "deb http://packages.cloud.google.com/apt cloud-sdk-$(lsb_release -c -s) main" > /etc/apt/sources.list.d/google-cloud-sdk.list && \
     apt-get update && \
