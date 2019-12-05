@@ -7,7 +7,7 @@ RUN apt-get update && \
     apt-get update && \
     apt-get install -y curl vim apt-transport-https nano jq git groff nginx zip httpie google-cloud-sdk && \
     rm -fr /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
-    pip install awscli cfn-flip cfn-lint yamllint yq boto3 && \
+    pip install awscli cfn-flip cfn-lint yamllint yq boto3 configparser && \
     curl -o /usr/local/bin/gomplate -sSL https://github.com/hairyhenderson/gomplate/releases/download/v2.7.0/gomplate_linux-amd64 && \
     chmod +x /usr/local/bin/gomplate &&  \
     ln -s /usr/local/bin/yq /usr/local/bin/aws /usr/local/bin/cfn-flip /usr/local/bin/cfn-lint /usr/bin
