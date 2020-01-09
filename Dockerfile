@@ -1,5 +1,4 @@
-FROM python:3.7
-
+FROM gcr.io/instruqt/cloud-client
 
 RUN apt-get update && \
     apt-get install -y curl lsb-release gnupg apt-utils wget unzip && \
