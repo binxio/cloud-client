@@ -29,7 +29,7 @@ RUN wget --quiet https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/t
   && mv terraform /usr/bin \
   && rm terraform_${TERRAFORM_VERSION}_linux_amd64.zip
 
-ARG NODE_VERSION=9.3.0
+ARG NODE_VERSION=10.3.0
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.1/install.sh | bash && \
     . $HOME/.nvm/nvm.sh && \
     nvm install v$NODE_VERSION \
@@ -39,6 +39,10 @@ ENV PATH=/bin/versions/node/v$NODE_VERSION/bin:$PATH
 RUN npm install -g aws-cdk
 
 RUN curl --silent --location "https://github.com/weaveworks/eksctl/releases/download/latest_release/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /usr/bin
+
+RUN wget https://github.com/cdr/code-server/releases/download/2.1692-vsc1.39.2/code-server2.1692-vsc1.39.2-linux-x86_64.tar.gz -O /tmp/code-server.tar.gz --no-check-certificate && \
+    tar -xzf /tmp/code-server.tar.gz --strip 1 -C /usr/bin && \
+    rm /tmp/code-server.tar.gz
 
 COPY assets/  /var/www/html/assets/
 COPY index.html.tmpl /opt/instruqt/
