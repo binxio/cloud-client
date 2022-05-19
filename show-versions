@@ -1,0 +1,9 @@
+#!/bin/bash
+
+python -V
+echo $(gcloud version | head -1 )
+echo eksctl $(eksctl version)
+echo node $(node --version)
+echo code-server $(/usr/bin/bin/code-server --version 2>/dev/null | head -1)
+echo aws CLI $(aws --version)
+terraform version

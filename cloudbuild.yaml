@@ -2,11 +2,11 @@ timeout: 45m
 steps:
 - name: 'gcr.io/cloud-builders/docker'
   timeout: 30m
-  args: ['build', '-t', '$_IMAGE:latest', '.']
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['tag', '$_IMAGE:latest', '$_IMAGE:$SHORT_SHA']
+  args: ['build', '-t', '${_IMAGE}', '.']
+
 substitutions:
-    _IMAGE: gcr.io/binx-io/instruqt/cloud-client
+  _IMAGE: 'gcr.io/${PROJECT_ID}/${REPO_NAME}:${TAG_NAME:-${SHORT_SHA}}'
+
 images:
-  - ${_IMAGE}:latest
-  - ${_IMAGE}:${SHORT_SHA}
+  - '${_IMAGE}'
+

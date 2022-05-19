@@ -1,4 +1,4 @@
-FROM python:3.7
+FROM python:3.9
 
 
 RUN apt-get update && \
@@ -8,8 +8,9 @@ RUN apt-get update && \
     apt-get update && \
     apt-get install -y curl vim apt-transport-https nano jq git groff nginx zip httpie google-cloud-sdk && \
     rm -fr /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
+    pip install --upgrade pip && \
     pip install awscli cfn-flip cfn-lint yamllint yq boto3 configparser && \
-    curl -o /usr/local/bin/gomplate -sSL https://github.com/hairyhenderson/gomplate/releases/download/v2.7.0/gomplate_linux-amd64 && \
+    curl -o /usr/local/bin/gomplate -sSL https://github.com/hairyhenderson/gomplate/releases/download/v3.10.0/gomplate_linux-amd64 && \
     chmod +x /usr/local/bin/gomplate &&  \
     ln -s /usr/local/bin/yq /usr/local/bin/aws /usr/local/bin/cfn-flip /usr/local/bin/cfn-lint /usr/bin
 
@@ -23,31 +24,37 @@ RUN echo "source /usr/lib/google-cloud-sdk/completion.bash.inc" >> .bashrc && \
     curl -sS --fail -L -o $HOME/.vim/colors/basic-dark.vim https://raw.githubusercontent.com/zcodes/vim-colors-basic/master/colors/basic-dark.vim && \
     echo "include /usr/share/nano/*" > $HOME/.nanorc
 
-ENV TERRAFORM_VERSION=0.12.17
-RUN wget --quiet https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
-  && unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
-  && mv terraform /usr/bin \
-  && rm terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+RUN git clone https://github.com/tfutils/tfenv.git /usr/lib/tfenv  && \
+    ln -s /usr/lib/tfenv/bin/* /usr/bin/ && \
+    /usr/bin/tfenv install 0.12.17 && \
+    /usr/bin/tfenv install 1.2.0 && \
+    /usr/bin/tfenv use 1.2.0
 
-ARG NODE_VERSION=10.3.0
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.1/install.sh | bash && \
+ARG NODE_VERSION=16.15.0
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash && \
     . $HOME/.nvm/nvm.sh && \
     nvm install v$NODE_VERSION \
     rm -rf $HOME/.nvm
+     
 
 ENV PATH=/bin/versions/node/v$NODE_VERSION/bin:$PATH
 RUN npm install -g aws-cdk
 
-RUN curl --silent --location "https://github.com/weaveworks/eksctl/releases/download/latest_release/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /usr/bin
 
-RUN wget https://github.com/cdr/code-server/releases/download/2.1692-vsc1.39.2/code-server2.1692-vsc1.39.2-linux-x86_64.tar.gz -O /tmp/code-server.tar.gz --no-check-certificate && \
-    tar -xzf /tmp/code-server.tar.gz --strip 1 -C /usr/bin && \
-    rm /tmp/code-server.tar.gz
+ARG EKSCTL_VERSION=0.97.0
+RUN curl -sSL "https://github.com/weaveworks/eksctl/releases/download/v${EKSCTL_VERSION}/eksctl_$(uname -s)_amd64.tar.gz" | tar -xz -C /usr/bin
+
+RUN curl -sSL https://github.com/coder/code-server/releases/download/v4.4.0/code-server-4.4.0-linux-amd64.tar.gz | \
+    tar -xzf - --strip 1 -C /usr/bin
 
 COPY assets/  /var/www/html/assets/
 COPY index.html.tmpl /opt/instruqt/
 COPY docker-entrypoint.sh /opt/instruqt/
+COPY show-versions /usr/local/bin/
+RUN  /usr/local/bin/show-versions
 
 ENV PATH=/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/bin/versions/node/v$NODE_VERSION/bin
+
+
 
 ENTRYPOINT [ "/opt/instruqt/docker-entrypoint.sh" ]
